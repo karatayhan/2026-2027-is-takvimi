@@ -3,8 +3,9 @@
   if (!calendarEl || calendarEl.dataset.swipeReady === '1') return;
   calendarEl.dataset.swipeReady = '1';
 
-  // Dikey sayfa kaydırmasını korurken yatay ay geçişini uygulama gibi hissettirir.
-  calendarEl.style.touchAction = 'pan-y';
+  // Dikey sayfa kaydırmasını ve iki parmakla yakınlaştırmayı korur;
+  // çift dokunarak yakınlaştırmayı ve yatay tarayıcı hareketini devre dışı bırakır.
+  calendarEl.style.touchAction = 'pan-y pinch-zoom';
   calendarEl.style.willChange = 'transform, opacity';
 
   let startX = 0;
@@ -14,6 +15,7 @@
   let dragging = false;
   let animating = false;
   let suppressClick = false;
+  let lastTapEnd = 0;
 
   const resetVisual = () => {
     calendarEl.style.transition = '';
@@ -83,6 +85,16 @@
     calendarEl.style.opacity = String(fade);
   }, { passive: true });
 
+  // Özellikle iOS/Safari için çift dokunarak yakınlaştırmayı yedek olarak engelle.
+  calendarEl.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    const moved = Math.abs(lastX - startX) > 10 || Math.abs(lastY - startY) > 10;
+    if (!moved && now - lastTapEnd > 0 && now - lastTapEnd < 320) {
+      e.preventDefault();
+    }
+    if (!moved) lastTapEnd = now;
+  }, { passive: false });
+
   calendarEl.addEventListener('touchend', (e) => {
     if (animating || e.changedTouches.length !== 1) return;
 
@@ -109,6 +121,11 @@
     calendarEl.style.opacity = '1';
     window.setTimeout(resetVisual, 180);
   }, { passive: true });
+
+  // Masaüstü ve bazı mobil tarayıcılarda çift tıklama yakınlaştırmasını engelle.
+  calendarEl.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+  }, { passive: false });
 
   // Bir kaydırmanın sonunda alttaki etkinliğin yanlışlıkla açılmasını engelle.
   calendarEl.addEventListener('click', (e) => {
