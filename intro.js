@@ -29,7 +29,11 @@
   document.body.prepend(splash);
 
   const logo = splash.querySelector('.splash-logo');
-  const parts = [1,2,3,4,5].map(i => fetch(`./logo-part${i}.txt`, {cache:'force-cache'}).then(r => {
+  const logoFiles = [
+    'logo-part1.txt','logo-part2.txt','logo-part3.txt','logo-part4.txt',
+    'logo-part5a.txt','logo-part5b.txt','logo-part5c.txt','logo-part5d.txt'
+  ];
+  const parts = logoFiles.map(file => fetch(`./${file}`, {cache:'force-cache'}).then(r => {
     if (!r.ok) throw new Error('Logo parçası yüklenemedi');
     return r.text();
   }));
