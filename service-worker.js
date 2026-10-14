@@ -1,4 +1,4 @@
-const CACHE='is-takvimi-v4';
+const CACHE='is-takvimi-v5';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./swipe.js'];
 
 self.addEventListener('install',e=>{
@@ -41,7 +41,6 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  // Güncellenen JS dosyalarını ağdan tercih et; çevrimdışıyken önbelleğe dön.
   if(e.request.url.endsWith('/swipe.js')){
     e.respondWith(
       fetch(e.request).then(resp=>{
