@@ -1,4 +1,4 @@
-const CACHE='is-takvimi-v2';
+const CACHE='is-takvimi-v3';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./swipe.js'];
 
 self.addEventListener('install',e=>{
@@ -38,6 +38,18 @@ self.addEventListener('fetch',e=>{
         return cached ? injectSwipe(cached.clone()) : Response.error();
       }
     })());
+    return;
+  }
+
+  // Güncellenen JS dosyalarını ağdan tercih et; çevrimdışıyken önbelleğe dön.
+  if(e.request.url.endsWith('/swipe.js')){
+    e.respondWith(
+      fetch(e.request).then(resp=>{
+        const clone=resp.clone();
+        caches.open(CACHE).then(c=>c.put(e.request,clone));
+        return resp;
+      }).catch(()=>caches.match(e.request))
+    );
     return;
   }
 
