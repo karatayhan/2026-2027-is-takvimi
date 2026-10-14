@@ -1,7 +1,7 @@
-const CACHE='is-takvimi-v16';
+const CACHE='is-takvimi-v17';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
-  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js',
+  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js',
   './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt',
   './logo-part5a.txt','./logo-part5b.txt','./logo-part5c.txt','./logo-part5d.txt'
 ];
@@ -32,6 +32,7 @@ async function injectEnhancements(response){
   if(!enhanced.includes('day-selection.js')) enhanced=enhanced.replace('</body>','<script src="./day-selection.js"></script></body>');
   if(!enhanced.includes('compact-days.js')) enhanced=enhanced.replace('</body>','<script src="./compact-days.js"></script></body>');
   if(!enhanced.includes('day-add-event.js')) enhanced=enhanced.replace('</body>','<script src="./day-add-event.js"></script></body>');
+  if(!enhanced.includes('local-event-management.js')) enhanced=enhanced.replace('</body>','<script src="./local-event-management.js"></script></body>');
   const headers=new Headers(response.headers);
   headers.set('content-type','text/html; charset=utf-8');
   return new Response(enhanced,{status:response.status,statusText:response.statusText,headers});
@@ -53,7 +54,7 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js')){
+  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js') || e.request.url.endsWith('/local-event-management.js')){
     e.respondWith(
       fetch(e.request).then(resp=>{
         caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
