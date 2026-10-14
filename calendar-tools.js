@@ -12,14 +12,18 @@
     .caltools-btn{border:0;border-radius:10px;padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer;background:#fff;color:#1e3a8a}
     .caltools-btn.secondary{background:#eef2ff;color:#1e3a8a}
     .caltools-btn.google{background:#fff;color:#1769aa;border:1px solid #dbeafe}
-    .caltools-btn.admin{background:#0f766e;color:#fff}
+    .caltools-btn.export{background:#0f766e;color:#fff}
+    .caltools-btn.admin{background:#334155;color:#fff}
     .event-google-btn{display:block;width:100%;margin-top:16px;border:0;border-radius:11px;padding:12px 14px;background:#1769aa;color:#fff;font-weight:900;font-size:14px}
     #adminPanel{position:fixed;inset:0;z-index:9998;background:#f6f8fb;display:none;overflow:auto}
     #adminPanel.show{display:block}
     .admin-head{position:sticky;top:0;z-index:2;background:#0f172a;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
     .admin-head h2{margin:0;font-size:18px}.admin-close{border:0;border-radius:9px;padding:8px 11px;font-weight:900}
     .admin-wrap{max-width:980px;margin:auto;padding:14px}
-    .admin-notice{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.45;margin-bottom:12px}
+    .admin-notice{background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;padding:11px 12px;border-radius:12px;font-size:12px;line-height:1.45;margin-bottom:12px}
+    .admin-export{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .admin-export button{border:0;border-radius:10px;padding:11px 10px;font-weight:900}
+    .admin-export .ics{background:#0f766e;color:#fff}.admin-export .gcal{background:#1769aa;color:#fff}
     .admin-grid{display:grid;grid-template-columns:1fr;gap:12px}
     @media(min-width:820px){.admin-grid{grid-template-columns:360px 1fr}}
     .admin-card{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:12px;box-shadow:0 8px 22px rgba(15,23,42,.05)}
@@ -54,19 +58,59 @@
   function subscribeUrl(){
     return `https://calendar.google.com/calendar/u/0/r?cid=${encodeURIComponent(SHARED_CALENDAR_ID)}`;
   }
+  function eventsRef(){ try{return EVENTS;}catch{return [];} }
 
-  // Header controls
+  function icsEscape(v=''){
+    return String(v).replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
+  }
+  function uidFor(e,i){
+    const raw=`${e.start}-${e.end}-${e.title}-${i}`.toLowerCase();
+    let h=2166136261;
+    for(let j=0;j<raw.length;j++){ h^=raw.charCodeAt(j); h=Math.imul(h,16777619); }
+    return `${(h>>>0).toString(16)}-${compactDate(e.start)}@yalova-odm-is-takvimi`;
+  }
+  function dtstamp(){ return new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z'); }
+  function buildIcs(){
+    const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Yalova Ölçme Değerlendirme Merkezi//2026-2027 İş Takvimi//TR','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:2026-2027 Eğitim Öğretim İş Takvimi','X-WR-TIMEZONE:Europe/Istanbul'];
+    eventsRef().forEach((e,i)=>{
+      lines.push('BEGIN:VEVENT');
+      lines.push(`UID:${uidFor(e,i)}`);
+      lines.push(`DTSTAMP:${dtstamp()}`);
+      lines.push(`DTSTART;VALUE=DATE:${compactDate(e.start)}`);
+      lines.push(`DTEND;VALUE=DATE:${compactDate(addDays(e.end,1))}`);
+      lines.push(`SUMMARY:${icsEscape(e.title)}`);
+      lines.push(`DESCRIPTION:${icsEscape(`${e.detail||''}\n\nKategori: ${e.category}\nKaynak: Yalova Ölçme Değerlendirme Merkezi`)}`);
+      lines.push(`CATEGORIES:${icsEscape(e.category)}`);
+      lines.push('TRANSP:TRANSPARENT');
+      lines.push('END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    return lines.join('\r\n')+'\r\n';
+  }
+  function downloadIcs(){
+    const blob=new Blob([buildIcs()],{type:'text/calendar;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='2026-2027_Egitim_Ogretim_Is_Takvimi.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }
+  function exportToGoogle(){
+    downloadIcs();
+    setTimeout(()=>alert('Takvim dosyası hazırlandı. Google Calendar’da Ayarlar → İçe aktar ve dışa aktar → İçe aktar bölümünden indirilen .ics dosyasını seçebilirsiniz. Bu yöntem ücretsizdir; sonraki değişiklikler için güncel .ics dosyasını yeniden içe aktarmanız gerekir.'),250);
+  }
+
   const head = document.querySelector('.head');
   if (head && !document.getElementById('calendarToolsBar')) {
     const bar = document.createElement('div');
     bar.id='calendarToolsBar'; bar.className='caltools-bar';
-    bar.innerHTML = `<button class="caltools-btn google" id="syncCalendarBtn">Google Calendar ile Senkronize Et</button><button class="caltools-btn admin" id="adminOpenBtn">Yönetici Paneli</button>`;
+    bar.innerHTML = `<button class="caltools-btn google" id="syncCalendarBtn">Google Calendar’da Aç</button><button class="caltools-btn export" id="icsDownloadBtn">Tüm Takvimi .ics İndir</button><button class="caltools-btn admin" id="adminOpenBtn">Yönetici Paneli</button>`;
     head.appendChild(bar);
   }
 
   document.getElementById('syncCalendarBtn')?.addEventListener('click', () => window.open(subscribeUrl(),'_blank','noopener'));
+  document.getElementById('icsDownloadBtn')?.addEventListener('click', downloadIcs);
 
-  // Add Google button to event detail modal, using the event most recently passed to show().
   let activeEvent = null;
   if (typeof show === 'function') {
     const originalShow = show;
@@ -78,24 +122,22 @@
     btn.addEventListener('click',()=>{ if(activeEvent) window.open(googleEventUrl(activeEvent),'_blank','noopener'); });
     modal.appendChild(btn);
   }
-  // Existing inline event click handlers resolve lexical show(), so capture clicked event text/date from modal after it opens.
-  document.getElementById('modalBg')?.addEventListener('click',()=>{},true);
   const mo = new MutationObserver(()=>{
     const title=document.getElementById('mTitle')?.textContent?.trim();
     const dateText=document.getElementById('mDate')?.textContent?.trim();
     if(!title) return;
-    const candidates=(typeof EVENTS!=='undefined'?EVENTS:[]).filter(e=>e.title===title);
+    const candidates=eventsRef().filter(e=>e.title===title);
     if(candidates.length===1) activeEvent=candidates[0];
     else if(candidates.length>1 && dateText){ activeEvent=candidates.find(e=>dateText.includes(String(Number(e.start.slice(8,10))))) || candidates[0]; }
   });
   if(document.getElementById('modalBg')) mo.observe(document.getElementById('modalBg'),{subtree:true,childList:true,characterData:true,attributes:true});
 
-  // Admin panel
   const panel=document.createElement('div'); panel.id='adminPanel';
   panel.innerHTML=`
     <div class="admin-head"><h2>Yönetici Paneli</h2><button class="admin-close" id="adminCloseBtn">Kapat</button></div>
     <div class="admin-wrap">
-      <div class="admin-notice"><strong>Hazırlık modu:</strong> Etkinlik ekleme/düzenleme şu anda bu cihazda saklanır ve takvim görünümüne anında yansır. Tüm kullanıcılarla ortak ve Google Calendar ile çift yönlü kalıcı senkronizasyon için OAuth bağlantısı sonraki adımda etkinleştirilecektir.</div>
+      <div class="admin-notice"><strong>Ücretsiz çalışma modu:</strong> Panelde yaptığınız değişiklikler bu cihazda saklanır ve web takvimine anında yansır. Güncel takvimi istediğiniz zaman .ics olarak dışa aktarabilir; Google Calendar, Apple Calendar veya Outlook’a aktarabilirsiniz.</div>
+      <div class="admin-export"><button class="ics" id="admIcs">Tüm Takvimi .ics İndir</button><button class="gcal" id="admGoogleImport">Google Calendar’a Aktar</button></div>
       <div class="admin-grid">
         <div class="admin-card">
           <h3>Etkinlik Düzenle</h3>
@@ -114,7 +156,6 @@
     </div>`;
   document.body.appendChild(panel);
 
-  function eventsRef(){ try{return EVENTS;}catch{return [];} }
   function saveLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsRef())); }
   function loadLocal(){
     const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return;
@@ -139,20 +180,24 @@
   }
   document.getElementById('adminOpenBtn')?.addEventListener('click',()=>{ panel.classList.add('show'); listAdmin(); });
   document.getElementById('adminCloseBtn').onclick=()=>panel.classList.remove('show');
+  document.getElementById('admIcs').onclick=downloadIcs;
+  document.getElementById('admGoogleImport').onclick=exportToGoogle;
   document.getElementById('admNew').onclick=clearForm;
   document.getElementById('admSave').onclick=()=>{
     const title=document.getElementById('admTitle').value.trim(), start=document.getElementById('admStart').value, end=document.getElementById('admEnd').value || start;
     if(!title||!start){ document.getElementById('admStatus').textContent='Başlık ve başlangıç tarihi zorunludur.'; return; }
+    if(end<start){ document.getElementById('admStatus').textContent='Bitiş tarihi başlangıç tarihinden önce olamaz.'; return; }
     const obj={title,category:document.getElementById('admCategory').value,start,end,detail:document.getElementById('admDetail').value.trim()};
     const idx=Number(document.getElementById('admIndex').value); const ev=eventsRef();
-    if(idx>=0 && ev[idx]) ev[idx]=obj; else { ev.push(obj); document.getElementById('admIndex').value=String(ev.length-1); }
+    if(idx>=0 && ev[idx]) ev[idx]=obj; else ev.push(obj);
     ev.sort((a,b)=>a.start.localeCompare(b.start)||a.title.localeCompare(b.title,'tr'));
-    saveLocal(); if(typeof render==='function') render(); listAdmin(); document.getElementById('admStatus').textContent='Değişiklik bu cihazda kaydedildi.';
+    saveLocal(); if(typeof render==='function') render(); listAdmin(); clearForm(); document.getElementById('admStatus').textContent='Değişiklik bu cihazda kaydedildi. İsterseniz güncel .ics dosyasını yeniden dışa aktarabilirsiniz.';
   };
   document.getElementById('admDelete').onclick=()=>{
     const idx=Number(document.getElementById('admIndex').value), ev=eventsRef(); if(idx<0||!ev[idx]) return;
-    if(!confirm('Bu etkinlik silinsin mi?')) return; ev.splice(idx,1); saveLocal(); if(typeof render==='function') render(); clearForm(); listAdmin(); document.getElementById('admStatus').textContent='Etkinlik bu cihazdan silindi.';
+    if(!confirm('Bu etkinlik silinsin mi?')) return; ev.splice(idx,1); saveLocal(); if(typeof render==='function') render(); clearForm(); listAdmin(); document.getElementById('admStatus').textContent='Etkinlik bu cihazdan silindi. Google Calendar’a daha önce aktarıldıysa oradan ayrıca silinmelidir.';
   };
 
+  window.downloadWorkCalendarIcs = downloadIcs;
   loadLocal();
 })();
