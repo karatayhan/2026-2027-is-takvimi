@@ -1,5 +1,9 @@
-const CACHE='is-takvimi-v5';
-const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./swipe.js'];
+const CACHE='is-takvimi-v6';
+const ASSETS=[
+  './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
+  './swipe.js','./intro.js',
+  './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt','./logo-part5.txt'
+];
 
 self.addEventListener('install',e=>{
   self.skipWaiting();
@@ -14,11 +18,15 @@ self.addEventListener('activate',e=>{
   );
 });
 
-async function injectSwipe(response){
+async function injectEnhancements(response){
   const html=await response.text();
-  const enhanced=html.includes('swipe.js')
-    ? html
-    : html.replace('</body>','<script src="./swipe.js"></script></body>');
+  let enhanced=html;
+  if(!enhanced.includes('swipe.js')){
+    enhanced=enhanced.replace('</body>','<script src="./swipe.js"></script></body>');
+  }
+  if(!enhanced.includes('intro.js')){
+    enhanced=enhanced.replace('</body>','<script src="./intro.js"></script></body>');
+  }
   const headers=new Headers(response.headers);
   headers.set('content-type','text/html; charset=utf-8');
   return new Response(enhanced,{status:response.status,statusText:response.statusText,headers});
@@ -29,23 +37,21 @@ self.addEventListener('fetch',e=>{
     e.respondWith((async()=>{
       try{
         const network=await fetch(e.request);
-        const enhanced=await injectSwipe(network.clone());
-        const cacheCopy=enhanced.clone();
-        caches.open(CACHE).then(c=>c.put('./index.html',cacheCopy));
+        const enhanced=await injectEnhancements(network.clone());
+        caches.open(CACHE).then(c=>c.put('./index.html',enhanced.clone()));
         return enhanced;
       }catch(err){
         const cached=await caches.match('./index.html');
-        return cached ? injectSwipe(cached.clone()) : Response.error();
+        return cached ? injectEnhancements(cached.clone()) : Response.error();
       }
     })());
     return;
   }
 
-  if(e.request.url.endsWith('/swipe.js')){
+  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js')){
     e.respondWith(
       fetch(e.request).then(resp=>{
-        const clone=resp.clone();
-        caches.open(CACHE).then(c=>c.put(e.request,clone));
+        caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
         return resp;
       }).catch(()=>caches.match(e.request))
     );
@@ -54,8 +60,7 @@ self.addEventListener('fetch',e=>{
 
   e.respondWith(
     caches.match(e.request).then(r=>r || fetch(e.request).then(resp=>{
-      const clone=resp.clone();
-      caches.open(CACHE).then(c=>c.put(e.request,clone));
+      caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
       return resp;
     }))
   );
