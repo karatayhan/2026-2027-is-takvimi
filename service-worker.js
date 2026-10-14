@@ -1,8 +1,9 @@
-const CACHE='is-takvimi-v6';
+const CACHE='is-takvimi-v7';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
   './swipe.js','./intro.js',
-  './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt','./logo-part5.txt'
+  './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt',
+  './logo-part5a.txt','./logo-part5b.txt','./logo-part5c.txt','./logo-part5d.txt'
 ];
 
 self.addEventListener('install',e=>{
