@@ -5,11 +5,11 @@
   const style = document.createElement('style');
   style.textContent = `
     .day{position:relative}
-    .day-add-btn{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:25px;height:25px;border:0;border-radius:999px;background:#4f46e5;color:#fff;font-size:20px;line-height:24px;font-weight:700;display:none;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(79,70,229,.28);z-index:6;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+    .day-add-btn{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:22px;height:22px;border:0;border-radius:999px;background:#4f46e5;color:#fff;font-size:18px;line-height:21px;font-weight:700;display:none;align-items:center;justify-content:center;box-shadow:0 2px 7px rgba(79,70,229,.28);z-index:8;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
     .day.day-selected .day-add-btn{display:flex}
-    .day.day-today.day-selected .day-add-btn{background:#0f766e;box-shadow:0 3px 9px rgba(15,118,110,.28)}
+    .day.day-today.day-selected .day-add-btn{background:#0f766e;box-shadow:0 2px 7px rgba(15,118,110,.28)}
     .day-add-btn:active{transform:translateX(-50%) scale(.92)}
-    @media(min-width:760px){.day-add-btn{width:28px;height:28px;font-size:22px;bottom:5px}}
+    @media(min-width:760px){.day-add-btn{width:24px;height:24px;font-size:19px;top:4px}}
   `;
   document.head.appendChild(style);
 
