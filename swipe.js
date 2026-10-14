@@ -1,4 +1,38 @@
 (() => {
+  // Tüm uygulamada çift dokunma yakınlaştırmasını engelle.
+  // Tek parmakla kaydırma ve iki parmakla pinch-zoom davranışı korunur.
+  document.documentElement.style.touchAction = 'manipulation';
+  document.body.style.touchAction = 'manipulation';
+
+  let globalStartX = 0;
+  let globalStartY = 0;
+  let globalLastTapEnd = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    globalStartX = e.touches[0].clientX;
+    globalStartY = e.touches[0].clientY;
+  }, { passive: true, capture: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (e.changedTouches.length !== 1) return;
+    const now = Date.now();
+    const dx = e.changedTouches[0].clientX - globalStartX;
+    const dy = e.changedTouches[0].clientY - globalStartY;
+    const isTap = Math.abs(dx) < 12 && Math.abs(dy) < 12;
+
+    if (isTap && globalLastTapEnd && now - globalLastTapEnd < 350) {
+      e.preventDefault();
+      globalLastTapEnd = 0;
+      return;
+    }
+    if (isTap) globalLastTapEnd = now;
+  }, { passive: false, capture: true });
+
+  document.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+  }, { passive: false, capture: true });
+
   const calendarEl = document.getElementById('calendar');
   if (!calendarEl || calendarEl.dataset.swipeReady === '1') return;
   calendarEl.dataset.swipeReady = '1';
@@ -28,7 +62,6 @@
     animating = true;
     suppressClick = true;
 
-    // Eski ayı parmağın yönünde ekrandan çıkar.
     calendarEl.style.transition = 'transform 210ms cubic-bezier(.22,.61,.36,1), opacity 210ms ease';
     calendarEl.style.transform = `translateX(${direction < 0 ? '-34%' : '34%'})`;
     calendarEl.style.opacity = '0';
@@ -37,7 +70,6 @@
       current = new Date(current.getFullYear(), current.getMonth() + (direction < 0 ? 1 : -1), 1);
       render();
 
-      // Yeni ay karşı taraftan içeri girsin.
       calendarEl.style.transition = 'none';
       calendarEl.style.transform = `translateX(${direction < 0 ? '34%' : '-34%'})`;
       calendarEl.style.opacity = '0';
@@ -78,14 +110,12 @@
       dragging = true;
     }
 
-    // Parmağı takip eden hafif dirençli geçiş.
     const resisted = dx * 0.72;
     const fade = Math.max(0.72, 1 - Math.abs(dx) / 900);
     calendarEl.style.transform = `translateX(${resisted}px)`;
     calendarEl.style.opacity = String(fade);
   }, { passive: true });
 
-  // Özellikle iOS/Safari için çift dokunarak yakınlaştırmayı yedek olarak engelle.
   calendarEl.addEventListener('touchend', (e) => {
     const now = Date.now();
     const moved = Math.abs(lastX - startX) > 10 || Math.abs(lastY - startY) > 10;
@@ -107,7 +137,6 @@
       return;
     }
 
-    // Yeterince kaydırılmadıysa mevcut aya yumuşakça geri dön.
     calendarEl.style.transition = 'transform 170ms ease-out, opacity 170ms ease-out';
     calendarEl.style.transform = 'translateX(0)';
     calendarEl.style.opacity = '1';
@@ -122,12 +151,6 @@
     window.setTimeout(resetVisual, 180);
   }, { passive: true });
 
-  // Masaüstü ve bazı mobil tarayıcılarda çift tıklama yakınlaştırmasını engelle.
-  calendarEl.addEventListener('dblclick', (e) => {
-    e.preventDefault();
-  }, { passive: false });
-
-  // Bir kaydırmanın sonunda alttaki etkinliğin yanlışlıkla açılmasını engelle.
   calendarEl.addEventListener('click', (e) => {
     if (!suppressClick) return;
     e.preventDefault();
