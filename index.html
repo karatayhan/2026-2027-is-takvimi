@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a8a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>2026-2027 İş Takvimi</title>
+<style>
+:root {
+  --bg:#f6f8fb; --panel:#fff; --text:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+  --official:#dc2626; --religious:#16a34a; --break:#eab308; --semester:#3b82f6;
+  --exam:#7c3aed; --meb:#f97316; --school:#06b6d4;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;padding:14px 16px;box-shadow:0 4px 18px rgba(0,0,0,.15)}
+.head{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:19px;margin:0} .sub{font-size:12px;opacity:.8;margin-top:3px}
+.install{background:#fff;color:#1e3a8a;border:0;border-radius:10px;padding:9px 12px;font-weight:800;display:none}
+main{max-width:1100px;margin:0 auto;padding:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+.month-title{font-weight:900;font-size:18px;text-align:center;flex:1}
+.navbtn{border:0;border-radius:10px;background:#eef2ff;color:#1e3a8a;padding:9px 12px;font-weight:900}
+.filters{display:flex;gap:7px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 9px;font-size:11px;font-weight:800;background:#fff}
+.dot{width:9px;height:9px;border-radius:50%}
+.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.weekdays{padding:8px 8px 0}
+.weekday{text-align:center;font-size:10px;color:var(--muted);font-weight:800;padding:4px 0}
+.calendar{padding:8px}
+.day{min-height:90px;border:1px solid var(--line);border-radius:10px;padding:5px;background:#fff;overflow:hidden}
+.day.out{background:#f8fafc;color:#94a3b8} .num{font-size:11px;font-weight:900;margin-bottom:4px}
+.ev{font-size:9px;line-height:1.15;color:#fff;padding:4px 5px;border-radius:6px;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
+.upcoming{margin-top:14px;padding:12px}
+.upcoming h2{font-size:16px;margin:0 0 10px}
+.up{border:1px solid var(--line);border-left:5px solid var(--c);padding:9px 10px;border-radius:10px;margin:8px 0;background:#fff}
+.up .d{font-size:11px;color:var(--muted);font-weight:700} .up .t{font-size:13px;font-weight:900;margin-top:2px}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:end;z-index:50}
+.modal-bg.show{display:flex}
+.modal{width:100%;background:#fff;border-radius:18px 18px 0 0;padding:18px;max-height:75vh;overflow:auto}
+.modal h3{margin:0 0 8px} .badge{display:inline-block;color:#fff;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800;margin-bottom:10px}
+.close{float:right;border:0;background:#eef2ff;color:#1e3a8a;border-radius:8px;padding:7px 10px;font-weight:800}
+.note{font-size:12px;color:var(--muted);text-align:center;padding:14px}
+@media(min-width:760px){.day{min-height:125px} .ev{font-size:11px} h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div><h1>2026-2027 İş Takvimi</h1><div class="sub">Tatil • Ortak sınav • Eğitim öğretim</div></div>
+    <button id="installBtn" class="install">Ana Ekrana Ekle</button>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="toolbar">
+      <button class="navbtn" id="prev">←</button>
+      <div class="month-title" id="title"></div>
+      <button class="navbtn" id="next">→</button>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="weekdays">
+      <div class="weekday">Pzt</div><div class="weekday">Sal</div><div class="weekday">Çar</div>
+      <div class="weekday">Per</div><div class="weekday">Cum</div><div class="weekday">Cmt</div><div class="weekday">Paz</div>
+    </div>
+    <div class="calendar" id="calendar"></div>
+  </section>
+
+  <section class="card upcoming">
+    <h2>Yaklaşan Etkinlikler</h2>
+    <div id="upcoming"></div>
+  </section>
+  <div class="note">İnternet kesilse bile son açılan sürüm cihazınızda çalışmaya devam eder.</div>
+</main>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="close" id="close">Kapat</button>
+    <h3 id="mTitle"></h3>
+    <span class="badge" id="mBadge"></span>
+    <div id="mDate" style="font-weight:800;margin-bottom:10px"></div>
+    <div id="mDetail" style="line-height:1.5"></div>
+  </div>
+</div>
+
+<script>
+const EVENTS=[{"title": "Öğretmenlerin mesleki çalışmalarının başlaması", "category": "Eğitim Öğretim", "start": "2026-09-01", "end": "2026-09-01", "detail": "2026-2027 eğitim öğretim yılı öğretmen mesleki çalışmalarının başlangıcı."}, {"title": "Uyum eğitimi ve rehberlik çalışmaları", "category": "Eğitim Öğretim", "start": "2026-09-07", "end": "2026-09-11", "detail": "Okul öncesi ve 1. sınıf uyum; 5. sınıf, hazırlık ve 9. sınıflar için rehberlik çalışmaları."}, {"title": "1. dönemin başlaması", "category": "Eğitim Öğretim", "start": "2026-09-14", "end": "2026-09-14", "detail": "2026-2027 eğitim öğretim yılı 1. dönem başlangıcı."}, {"title": "Cumhuriyet Bayramı arifesi", "category": "Resmî / Ulusal Tatil", "start": "2026-10-28", "end": "2026-10-28", "detail": "13.00'ten itibaren yarım gün tatil."}, {"title": "Cumhuriyet Bayramı", "category": "Resmî / Ulusal Tatil", "start": "2026-10-29", "end": "2026-10-29", "detail": "29 Ekim Cumhuriyet Bayramı."}, {"title": "1. dönem 1. yazılı sınav haftası", "category": "Ortak Sınav Haftası", "start": "2026-11-02", "end": "2026-11-13", "detail": "Okullarda ortak yazılı sınavların uygulanacağı hafta/aralık."}, {"title": "6. Sınıf Matematik", "category": "MEB Ortak Sınavı", "start": "2026-11-11", "end": "2026-11-11", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "10. Sınıf Türk Dili ve Edebiyatı", "category": "MEB Ortak Sınavı", "start": "2026-11-12", "end": "2026-11-12", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "1. dönem ara tatili", "category": "Ara Tatil", "start": "2026-11-16", "end": "2026-11-20", "detail": "2026-2027 eğitim öğretim yılı 1. dönem ara tatili."}, {"title": "Yılbaşı", "category": "Resmî / Ulusal Tatil", "start": "2027-01-01", "end": "2027-01-01", "detail": "Yılbaşı resmî tatili."}, {"title": "1. dönem 2. yazılı sınav haftası", "category": "Ortak Sınav Haftası", "start": "2027-01-04", "end": "2027-01-15", "detail": "Okullarda ortak yazılı sınavların uygulanacağı hafta/aralık."}, {"title": "7. Sınıf Türkçe", "category": "MEB Ortak Sınavı", "start": "2027-01-05", "end": "2027-01-05", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "9. Sınıf Matematik", "category": "MEB Ortak Sınavı", "start": "2027-01-06", "end": "2027-01-06", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "1. dönemin sona ermesi", "category": "Eğitim Öğretim", "start": "2027-01-22", "end": "2027-01-22", "detail": "2026-2027 eğitim öğretim yılı 1. dönem sonu."}, {"title": "Yarıyıl tatili", "category": "Yarıyıl Tatili", "start": "2027-01-25", "end": "2027-02-05", "detail": "2026-2027 eğitim öğretim yılı yarıyıl tatili."}, {"title": "2. dönemin başlaması", "category": "Eğitim Öğretim", "start": "2027-02-08", "end": "2027-02-08", "detail": "2026-2027 eğitim öğretim yılı 2. dönem başlangıcı."}, {"title": "Ramazan Bayramı arifesi", "category": "Dinî Bayram", "start": "2027-03-08", "end": "2027-03-08", "detail": "Öğleden sonra yarım gün tatil."}, {"title": "2. dönem ara tatili", "category": "Ara Tatil", "start": "2027-03-08", "end": "2027-03-12", "detail": "2026-2027 eğitim öğretim yılı 2. dönem ara tatili."}, {"title": "Ramazan Bayramı", "category": "Dinî Bayram", "start": "2027-03-09", "end": "2027-03-11", "detail": "Ramazan Bayramı 1-3. gün."}, {"title": "2. dönem 1. yazılı sınav haftası", "category": "Ortak Sınav Haftası", "start": "2027-03-29", "end": "2027-04-09", "detail": "Okullarda ortak yazılı sınavların uygulanacağı hafta/aralık."}, {"title": "7. Sınıf Matematik", "category": "MEB Ortak Sınavı", "start": "2027-04-06", "end": "2027-04-06", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "9. Sınıf Türk Dili ve Edebiyatı", "category": "MEB Ortak Sınavı", "start": "2027-04-07", "end": "2027-04-07", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "Ulusal Egemenlik ve Çocuk Bayramı", "category": "Resmî / Ulusal Tatil", "start": "2027-04-23", "end": "2027-04-23", "detail": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı."}, {"title": "Emek ve Dayanışma Günü", "category": "Resmî / Ulusal Tatil", "start": "2027-05-01", "end": "2027-05-01", "detail": "1 Mayıs Emek ve Dayanışma Günü."}, {"title": "Kurban Bayramı arifesi", "category": "Dinî Bayram", "start": "2027-05-15", "end": "2027-05-15", "detail": "Öğleden sonra yarım gün tatil."}, {"title": "Kurban Bayramı", "category": "Dinî Bayram", "start": "2027-05-16", "end": "2027-05-19", "detail": "Kurban Bayramı 1-4. gün."}, {"title": "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "category": "Resmî / Ulusal Tatil", "start": "2027-05-19", "end": "2027-05-19", "detail": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı."}, {"title": "2. dönem 2. yazılı sınav haftası", "category": "Ortak Sınav Haftası", "start": "2027-06-07", "end": "2027-06-18", "detail": "Okullarda ortak yazılı sınavların uygulanacağı hafta/aralık."}, {"title": "6. Sınıf Türkçe", "category": "MEB Ortak Sınavı", "start": "2027-06-08", "end": "2027-06-08", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "10. Sınıf Matematik", "category": "MEB Ortak Sınavı", "start": "2027-06-09", "end": "2027-06-09", "detail": "Bakanlığın yapacağı ülke geneli ortak yazılı sınav."}, {"title": "2026-2027 eğitim öğretim yılının sona ermesi", "category": "Eğitim Öğretim", "start": "2027-06-25", "end": "2027-06-25", "detail": "2026-2027 eğitim öğretim yılının sona ermesi."}, {"title": "Demokrasi ve Millî Birlik Günü", "category": "Resmî / Ulusal Tatil", "start": "2027-07-15", "end": "2027-07-15", "detail": "15 Temmuz Demokrasi ve Millî Birlik Günü."}, {"title": "Zafer Bayramı", "category": "Resmî / Ulusal Tatil", "start": "2027-08-30", "end": "2027-08-30", "detail": "30 Ağustos Zafer Bayramı."}];
+const COLORS={
+  "Resmî / Ulusal Tatil":"#dc2626","Dinî Bayram":"#16a34a","Ara Tatil":"#eab308",
+  "Yarıyıl Tatili":"#3b82f6","Ortak Sınav Haftası":"#7c3aed","MEB Ortak Sınavı":"#f97316","Eğitim Öğretim":"#06b6d4"
+};
+const LABELS={
+  "Resmî / Ulusal Tatil":"Resmî Tatil","Dinî Bayram":"Dinî Bayram","Ara Tatil":"Ara Tatil",
+  "Yarıyıl Tatili":"Yarıyıl Tatili","Ortak Sınav Haftası":"Ortak Sınav Haftası",
+  "MEB Ortak Sınavı":"Bakanlık Ortak Sınavı","Eğitim Öğretim":"Eğitim Öğretim"
+};
+const cats=Object.keys(COLORS), selected=new Set(cats);
+let current=new Date(2026,9,1);
+
+function p(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+function iso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function tr(s){return p(s).toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}
+function inRange(ds,e){const t=p(ds),a=p(e.start),b=p(e.end);return t>=a&&t<=b}
+function dateText(e){return e.start===e.end?tr(e.start):`${tr(e.start)} – ${tr(e.end)}`}
+
+const filters=document.getElementById("filters");
+cats.forEach(c=>{
+  const l=document.createElement("label");l.className="chip";
+  l.innerHTML=`<input type="checkbox" checked data-c="${c}"><span class="dot" style="background:${COLORS[c]}"></span>${LABELS[c]}`;
+  l.querySelector("input").onchange=e=>{e.target.checked?selected.add(c):selected.delete(c);render()};
+  filters.appendChild(l);
+});
+
+function render(){
+  const cal=document.getElementById("calendar");cal.innerHTML="";
+  document.getElementById("title").textContent=current.toLocaleDateString("tr-TR",{month:"long",year:"numeric"});
+  const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1);
+  const offset=(first.getDay()+6)%7, start=new Date(y,m,1-offset);
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const ds=iso(d);
+    const box=document.createElement("div");box.className="day"+(d.getMonth()!==m?" out":"");
+    box.innerHTML=`<div class="num">${d.getDate()}</div>`;
+    EVENTS.filter(e=>selected.has(e.category)&&inRange(ds,e)).slice(0,3).forEach(e=>{
+      const v=document.createElement("div");v.className="ev";v.style.background=COLORS[e.category];v.textContent=e.title;v.onclick=()=>show(e);box.appendChild(v)
+    });
+    cal.appendChild(box)
+  }
+  const now=new Date();now.setHours(0,0,0,0);
+  const ups=EVENTS.filter(e=>selected.has(e.category)&&p(e.end)>=now).sort((a,b)=>p(a.start)-p(b.start)).slice(0,8);
+  document.getElementById("upcoming").innerHTML=ups.map((e,i)=>`<div class="up" style="--c:${COLORS[e.category]}" onclick="show(EVENTS[${EVENTS.indexOf(e)}])"><div class="d">${dateText(e)}</div><div class="t">${e.title}</div></div>`).join("")||"<div class='note'>Yaklaşan etkinlik yok.</div>";
+}
+function show(e){
+  document.getElementById("mTitle").textContent=e.title;
+  const b=document.getElementById("mBadge");b.textContent=LABELS[e.category];b.style.background=COLORS[e.category];
+  document.getElementById("mDate").textContent=dateText(e);
+  document.getElementById("mDetail").textContent=e.detail;
+  document.getElementById("modalBg").classList.add("show")
+}
+document.getElementById("close").onclick=()=>document.getElementById("modalBg").classList.remove("show");
+document.getElementById("modalBg").onclick=e=>{if(e.target.id==="modalBg")e.currentTarget.classList.remove("show")};
+document.getElementById("prev").onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()-1,1);render()};
+document.getElementById("next").onclick=()=>{current=new Date(current.getFullYear(),current.getMonth()+1,1);render()};
+
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").style.display="block";
+});
+document.getElementById("installBtn").onclick=async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;document.getElementById("installBtn").style.display="none";
+};
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js"));
+render();
+</script>
+</body>
+</html>
