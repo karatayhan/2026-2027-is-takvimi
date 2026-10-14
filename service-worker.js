@@ -1,13 +1,51 @@
-const CACHE='is-takvimi-v1';
-const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+const CACHE='is-takvimi-v2';
+const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./swipe.js'];
+
+self.addEventListener('install',e=>{
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+});
+
+self.addEventListener('activate',e=>{
+  e.waitUntil(
+    caches.keys()
+      .then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+      .then(()=>self.clients.claim())
+  );
+});
+
+async function injectSwipe(response){
+  const html=await response.text();
+  const enhanced=html.includes('swipe.js')
+    ? html
+    : html.replace('</body>','<script src="./swipe.js"></script></body>');
+  const headers=new Headers(response.headers);
+  headers.set('content-type','text/html; charset=utf-8');
+  return new Response(enhanced,{status:response.status,statusText:response.statusText,headers});
+}
+
 self.addEventListener('fetch',e=>{
+  if(e.request.mode==='navigate'){
+    e.respondWith((async()=>{
+      try{
+        const network=await fetch(e.request);
+        const enhanced=await injectSwipe(network.clone());
+        const cacheCopy=enhanced.clone();
+        caches.open(CACHE).then(c=>c.put('./index.html',cacheCopy));
+        return enhanced;
+      }catch(err){
+        const cached=await caches.match('./index.html');
+        return cached ? injectSwipe(cached.clone()) : Response.error();
+      }
+    })());
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then(r=>r || fetch(e.request).then(resp=>{
       const clone=resp.clone();
       caches.open(CACHE).then(c=>c.put(e.request,clone));
       return resp;
-    }).catch(()=>caches.match('./index.html')))
+    }))
   );
 });
