@@ -1,4 +1,4 @@
-const CACHE='is-takvimi-v9';
+const CACHE='is-takvimi-v10';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
   './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js',
