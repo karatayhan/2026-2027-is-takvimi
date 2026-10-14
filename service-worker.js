@@ -1,7 +1,7 @@
-const CACHE='is-takvimi-v13';
+const CACHE='is-takvimi-v14';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
-  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js',
+  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js',
   './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt',
   './logo-part5a.txt','./logo-part5b.txt','./logo-part5c.txt','./logo-part5d.txt'
 ];
@@ -29,6 +29,7 @@ async function injectEnhancements(response){
   if(!enhanced.includes('admin-categories.js')) enhanced=enhanced.replace('</body>','<script src="./admin-categories.js"></script></body>');
   if(!enhanced.includes('side-menu.js')) enhanced=enhanced.replace('</body>','<script src="./side-menu.js"></script></body>');
   if(!enhanced.includes('admin-fix.js')) enhanced=enhanced.replace('</body>','<script src="./admin-fix.js"></script></body>');
+  if(!enhanced.includes('day-selection.js')) enhanced=enhanced.replace('</body>','<script src="./day-selection.js"></script></body>');
   const headers=new Headers(response.headers);
   headers.set('content-type','text/html; charset=utf-8');
   return new Response(enhanced,{status:response.status,statusText:response.statusText,headers});
@@ -50,7 +51,7 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js')){
+  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js')){
     e.respondWith(
       fetch(e.request).then(resp=>{
         caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
