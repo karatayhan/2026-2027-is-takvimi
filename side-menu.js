@@ -19,9 +19,14 @@
     .side-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 0 14px;border-bottom:1px solid #e5e7eb}
     .side-menu-title{font-size:18px;font-weight:900}.side-menu-sub{font-size:11px;color:#64748b;margin-top:3px}
     .side-menu-close{width:38px;height:38px;border:0;border-radius:10px;background:#eef2ff;color:#1e3a8a;font-size:21px;font-weight:900;cursor:pointer}
-    .side-menu-actions{display:flex;flex-direction:column;gap:10px;padding-top:16px}
+    .side-menu-actions{display:flex;flex-direction:column;gap:10px;padding-top:16px;overflow-y:auto}
     #sideMenu .caltools-btn{display:flex!important;align-items:center;justify-content:flex-start;width:100%;min-height:48px;margin:0;border-radius:12px;padding:12px 14px;font-size:13px;text-align:left;box-shadow:none}
     #sideMenu .caltools-btn.admin{background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1}
+    .side-menu-link{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;border-radius:12px;padding:12px 14px;text-decoration:none;font-size:13px;font-weight:900;box-sizing:border-box}
+    .side-menu-link.news{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+    .side-menu-link.announcements{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+    .side-menu-link .ext{font-size:15px;opacity:.75}
+    .side-menu-section-title{margin-top:4px;font-size:11px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
     .side-menu-note{margin-top:auto;padding-top:16px;font-size:11px;line-height:1.45;color:#64748b;border-top:1px solid #e5e7eb}
     body.side-menu-open{overflow:hidden!important}
     @media (prefers-reduced-motion:reduce){#sideMenu,#sideMenuBackdrop{transition:none}}
@@ -61,6 +66,27 @@
   const adminBtn = document.getElementById('adminOpenBtn');
   if (adminBtn) actions.appendChild(adminBtn);
 
+  const newsTitle = document.createElement('div');
+  newsTitle.className = 'side-menu-section-title';
+  newsTitle.textContent = 'Haberler ve Duyurular';
+  actions.appendChild(newsTitle);
+
+  const newsLink = document.createElement('a');
+  newsLink.className = 'side-menu-link news';
+  newsLink.href = 'https://yalovaodm.meb.gov.tr/www/duyurular/kategori/1';
+  newsLink.target = '_blank';
+  newsLink.rel = 'noopener noreferrer';
+  newsLink.innerHTML = '<span>Haberler</span><span class="ext" aria-hidden="true">↗</span>';
+  actions.appendChild(newsLink);
+
+  const announcementsLink = document.createElement('a');
+  announcementsLink.className = 'side-menu-link announcements';
+  announcementsLink.href = 'https://yalovaodm.meb.gov.tr/www/duyurular/kategori/2';
+  announcementsLink.target = '_blank';
+  announcementsLink.rel = 'noopener noreferrer';
+  announcementsLink.innerHTML = '<span>Duyurular</span><span class="ext" aria-hidden="true">↗</span>';
+  actions.appendChild(announcementsLink);
+
   // Google Calendar ve .ics işlemleri yönetici panelinde bulunduğu için yan menüde gösterilmez.
   document.getElementById('syncCalendarBtn')?.remove();
   document.getElementById('icsDownloadBtn')?.remove();
@@ -86,6 +112,6 @@
   backdrop.addEventListener('click', closeMenu);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
   actions.addEventListener('click', e => {
-    if (e.target.closest('button')) window.setTimeout(closeMenu, 80);
+    if (e.target.closest('button') || e.target.closest('a')) window.setTimeout(closeMenu, 80);
   });
 })();
