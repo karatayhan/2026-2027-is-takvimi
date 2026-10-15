@@ -24,6 +24,8 @@
   today.setHours(0,0,0,0);
   const todayIso = localIso(today);
   let selectedIso = todayIso;
+  let lastClickedIso = null;
+  let addVisibleIso = null;
 
   function mapDatesToCells(){
     const cal = document.getElementById('calendar');
@@ -44,6 +46,7 @@
       cell.dataset.date = ds;
       cell.classList.toggle('day-today', ds === todayIso);
       cell.classList.toggle('day-selected', ds === selectedIso);
+      cell.classList.toggle('day-add-visible', ds === addVisibleIso);
       cell.setAttribute('aria-selected', ds === selectedIso ? 'true' : 'false');
       if (ds === todayIso) cell.setAttribute('aria-current','date');
       else cell.removeAttribute('aria-current');
@@ -58,19 +61,38 @@
     document.querySelectorAll('#calendar .day').forEach(el => el.setAttribute('aria-selected', el === cell ? 'true' : 'false'));
   }
 
+  function hideAddButtons(){
+    addVisibleIso = null;
+    document.querySelectorAll('#calendar .day.day-add-visible').forEach(el => el.classList.remove('day-add-visible'));
+  }
+
   const cal = document.getElementById('calendar');
   if (!cal) return;
 
-  // Etkinlik kartına dokunulsa bile o gün önce seçilir, ardından etkinlik ayrıntısı normal şekilde açılır.
+  // İlk dokunuş yalnızca günü seçer. Aynı güne ikinci kez dokunulduğunda + düğmesi görünür.
   cal.addEventListener('click', e => {
+    if (e.target.closest('.day-add-btn')) return;
     const cell = e.target.closest('.day');
-    if (!cell || !cal.contains(cell)) return;
+    if (!cell || !cal.contains(cell) || !cell.dataset.date) return;
+
+    const ds = cell.dataset.date;
+    const isSecondClick = lastClickedIso === ds && selectedIso === ds;
+
+    if (isSecondClick) {
+      hideAddButtons();
+      addVisibleIso = ds;
+      cell.classList.add('day-add-visible');
+      return;
+    }
+
+    hideAddButtons();
     selectCell(cell);
+    lastClickedIso = ds;
   }, true);
 
   const observer = new MutationObserver(() => mapDatesToCells());
   observer.observe(cal,{childList:true,subtree:false});
 
-  // İlk görünümde bugün seçili olsun.
+  // İlk görünümde bugün seçili olsun; artı düğmesi kullanıcı dokunmadan görünmez.
   mapDatesToCells();
 })();
