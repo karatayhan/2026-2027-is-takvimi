@@ -1,7 +1,7 @@
-const CACHE='is-takvimi-v27';
+const CACHE='is-takvimi-v28';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
-  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js','./month-year-picker.js','./pull-to-refresh.js','./ksdt-menu.js','./header-brand.js',
+  './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js','./month-year-picker.js','./pull-to-refresh.js','./ksdt-menu.js','./header-brand.js','./ksdt-terms.js',
   './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt',
   './logo-part5a.txt','./logo-part5b.txt','./logo-part5c.txt','./logo-part5d.txt'
 ];
@@ -37,6 +37,7 @@ async function injectEnhancements(response){
   if(!enhanced.includes('pull-to-refresh.js')) enhanced=enhanced.replace('</body>','<script src="./pull-to-refresh.js"></script></body>');
   if(!enhanced.includes('ksdt-menu.js')) enhanced=enhanced.replace('</body>','<script src="./ksdt-menu.js"></script></body>');
   if(!enhanced.includes('header-brand.js')) enhanced=enhanced.replace('</body>','<script src="./header-brand.js"></script></body>');
+  if(!enhanced.includes('ksdt-terms.js')) enhanced=enhanced.replace('</body>','<script src="./ksdt-terms.js"></script></body>');
   const headers=new Headers(response.headers);
   headers.set('content-type','text/html; charset=utf-8');
   return new Response(enhanced,{status:response.status,statusText:response.statusText,headers});
@@ -58,7 +59,7 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js') || e.request.url.endsWith('/local-event-management.js') || e.request.url.endsWith('/month-year-picker.js') || e.request.url.endsWith('/pull-to-refresh.js') || e.request.url.endsWith('/ksdt-menu.js') || e.request.url.endsWith('/header-brand.js')){
+  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js') || e.request.url.endsWith('/local-event-management.js') || e.request.url.endsWith('/month-year-picker.js') || e.request.url.endsWith('/pull-to-refresh.js') || e.request.url.endsWith('/ksdt-menu.js') || e.request.url.endsWith('/header-brand.js') || e.request.url.endsWith('/ksdt-terms.js')){
     e.respondWith(
       fetch(e.request).then(resp=>{
         caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
