@@ -4,7 +4,7 @@
   const style = document.createElement('style');
   style.textContent = `
     body.splash-active{overflow:hidden}
-    #splashScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:28px 22px;background:#f5f2e9;opacity:1;visibility:visible;transition:opacity 380ms ease,visibility 380ms ease}
+    #splashScreen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:28px 22px;background:#fbfbf8;opacity:1;visibility:visible;transition:opacity 380ms ease,visibility 380ms ease}
     #splashScreen.hide{opacity:0;visibility:hidden;pointer-events:none}
     .splash-inner{width:min(92vw,560px);text-align:center;min-height:460px;display:flex;flex-direction:column;align-items:center;justify-content:center}
     .splash-logo{display:block;width:min(66vw,310px);max-height:38vh;object-fit:contain;margin:0 auto;filter:drop-shadow(0 10px 22px rgba(15,23,42,.10));opacity:0;transform:scale(.82);animation:introLogo .58s cubic-bezier(.22,.61,.36,1) .04s forwards}
