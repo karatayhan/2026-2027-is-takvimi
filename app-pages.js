@@ -73,6 +73,10 @@
     if(n === 1) upcomingPage.scrollTop = 0;
   }
 
+  function atBottom(el){
+    return el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+  }
+
   function touchStart(e){
     if(e.touches.length !== 1) return;
     startX = e.touches[0].clientX;
@@ -86,7 +90,7 @@
     const dy = e.changedTouches[0].clientY - startY;
     if(Math.abs(dy) < 70 || Math.abs(dy) <= Math.abs(dx) * 1.25) return;
 
-    if(source === calendarPage && dy < 0){
+    if(source === calendarPage && dy < 0 && atBottom(calendarPage)){
       showPage(1);
     } else if(source === upcomingPage && dy > 0 && upcomingPage.scrollTop <= 8){
       showPage(0);
@@ -101,7 +105,7 @@
   let wheelLock = false;
   viewport.addEventListener('wheel', (e) => {
     if(wheelLock || Math.abs(e.deltaY) < 35) return;
-    if(page === 0 && e.deltaY > 0){
+    if(page === 0 && e.deltaY > 0 && atBottom(calendarPage)){
       wheelLock = true;
       showPage(1);
       setTimeout(() => wheelLock = false, 550);
