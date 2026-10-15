@@ -16,7 +16,6 @@
   function eventsRef(){ try { return EVENTS; } catch (_) { return []; } }
   function saveLocal(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsRef())); } catch (_) {} }
 
-  // Yönetici panelinden eklenen kategorilerin ana takvimde gerçekten aktif olmasını sağla.
   try {
     Object.entries(CUSTOM).forEach(([name,color]) => {
       if (typeof COLORS !== 'undefined') COLORS[name] = color;
@@ -25,7 +24,6 @@
     });
   } catch (_) {}
 
-  // Özel kategori filtrelerinin durumunu ana selected Set'i ile eşleştir.
   function repairCustomFilters(){
     const filters = document.getElementById('filters');
     if (!filters) return;
@@ -71,6 +69,15 @@
     }
 
     document.getElementById('calendar')?.addEventListener('click', e => {
+      const agendaEl = e.target.closest('.agenda-timed-event,.agenda-all-day-event');
+      if (agendaEl) {
+        window.setTimeout(() => {
+          activeEvent = window.__agendaActiveEvent || null;
+          syncActionVisibility();
+        }, 0);
+        return;
+      }
+
       const evEl = e.target.closest('.ev');
       if (!evEl) return;
       const cell = evEl.closest('.day');
@@ -81,7 +88,6 @@
       window.setTimeout(syncActionVisibility, 0);
     }, true);
 
-    // Yaklaşan etkinlikler listesinden açılan etkinlikleri de tanı.
     document.getElementById('upcoming')?.addEventListener('click', e => {
       const row = e.target.closest('.up');
       if (!row) return;
@@ -102,6 +108,8 @@
         const category = document.getElementById('admCategory');
         const start = document.getElementById('admStart');
         const end = document.getElementById('admEnd');
+        const startTime = document.getElementById('admStartTime');
+        const endTime = document.getElementById('admEndTime');
         const detail = document.getElementById('admDetail');
         const status = document.getElementById('admStatus');
         if (index) index.value = String(idx);
@@ -109,6 +117,8 @@
         if (category) category.value = activeEvent.category || 'Diğer';
         if (start) start.value = activeEvent.start || '';
         if (end) end.value = activeEvent.end || activeEvent.start || '';
+        if (startTime) startTime.value = activeEvent.startTime || '';
+        if (endTime) endTime.value = activeEvent.endTime || '';
         if (detail) detail.value = activeEvent.detail || '';
         if (status) {
           status.textContent = 'Etkinliği düzenliyorsunuz. Değişikliklerden sonra Kaydet’e basın.';
@@ -127,13 +137,13 @@
       saveLocal();
       document.getElementById('modalBg')?.classList.remove('show');
       activeEvent = null;
+      window.__agendaActiveEvent = null;
       actions.classList.remove('show');
       try { if (typeof render === 'function') render(); } catch (_) {}
     });
   }
 
   repairCustomFilters();
-  // localStorage yüklemesi bittikten sonra özel kategoriler görünür olsun.
   window.setTimeout(() => {
     try {
       Object.keys(CUSTOM).forEach(name => {
