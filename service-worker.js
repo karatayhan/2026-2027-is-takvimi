@@ -1,6 +1,6 @@
-const CACHE='is-takvimi-v43';
+const CACHE='is-takvimi-v44';
 const ASSETS=[
-  './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
+  './','./index.html','./manifest.json','./app-icon.svg','./icon-192.png','./icon-512.png',
   './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js','./month-year-picker.js','./pull-to-refresh.js','./ksdt-menu.js','./header-brand.js','./header-title.js','./ksdt-terms.js','./ksdt-period1-v4.js','./calendar-views.js','./week-compact.js','./news-panel.js','./news-filter-fix.js','./announcements-panel.js','./event-time-agenda.js',
   './logo-part1.txt','./logo-part2.txt','./logo-part3.txt','./logo-part4.txt',
   './logo-part5a.txt','./logo-part5b.txt','./logo-part5c.txt','./logo-part5d.txt'
@@ -67,7 +67,7 @@ self.addEventListener('fetch',e=>{
     return;
   }
 
-  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js') || e.request.url.endsWith('/local-event-management.js') || e.request.url.endsWith('/month-year-picker.js') || e.request.url.endsWith('/pull-to-refresh.js') || e.request.url.endsWith('/ksdt-menu.js') || e.request.url.endsWith('/header-brand.js') || e.request.url.endsWith('/header-title.js') || e.request.url.endsWith('/ksdt-terms.js') || e.request.url.endsWith('/ksdt-period1-v4.js') || e.request.url.endsWith('/calendar-views.js') || e.request.url.endsWith('/week-compact.js') || e.request.url.endsWith('/news-panel.js') || e.request.url.endsWith('/news-filter-fix.js') || e.request.url.endsWith('/announcements-panel.js') || e.request.url.endsWith('/event-time-agenda.js')){
+  if(e.request.url.endsWith('/swipe.js') || e.request.url.endsWith('/intro.js') || e.request.url.endsWith('/app-pages.js') || e.request.url.endsWith('/calendar-tools.js') || e.request.url.endsWith('/admin-categories.js') || e.request.url.endsWith('/side-menu.js') || e.request.url.endsWith('/admin-fix.js') || e.request.url.endsWith('/day-selection.js') || e.request.url.endsWith('/compact-days.js') || e.request.url.endsWith('/day-add-event.js') || e.request.url.endsWith('/local-event-management.js') || e.request.url.endsWith('/month-year-picker.js') || e.request.url.endsWith('/pull-to-refresh.js') || e.request.url.endsWith('/ksdt-menu.js') || e.request.url.endsWith('/header-brand.js') || e.request.url.endsWith('/header-title.js') || e.request.url.endsWith('/ksdt-terms.js') || e.request.url.endsWith('/ksdt-period1-v4.js') || e.request.url.endsWith('/calendar-views.js') || e.request.url.endsWith('/week-compact.js') || e.request.url.endsWith('/news-panel.js') || e.request.url.endsWith('/news-filter-fix.js') || e.request.url.endsWith('/announcements-panel.js') || e.request.url.endsWith('/event-time-agenda.js') || e.request.url.endsWith('/app-icon.svg')){
     e.respondWith(
       fetch(e.request).then(resp=>{
         caches.open(CACHE).then(c=>c.put(e.request,resp.clone()));
