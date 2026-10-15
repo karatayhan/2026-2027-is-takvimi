@@ -27,10 +27,14 @@
     .side-menu-link.announcements{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
     .side-menu-link .ext{font-size:15px;opacity:.75}
     .side-menu-section-title{margin-top:4px;font-size:11px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+    #socialMediaTitle{order:1000;margin-top:10px;padding-top:12px;border-top:1px solid #e5e7eb}
+    #socialMediaLinks{order:1001}
     .social-links{display:flex;align-items:center;gap:10px;padding:2px 0 4px}
     .social-link{width:44px;height:44px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#020617;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 8px rgba(15,23,42,.05);-webkit-tap-highlight-color:transparent;transition:transform .12s ease,background .12s ease}
     .social-link:active{transform:scale(.94);background:#f8fafc}
+    .social-link.whatsapp{color:#25D366}
     .social-icon{width:24px;height:24px;display:block}
+    .social-icon.whatsapp-icon{width:29px;height:29px}
     .social-icon.xmark{font-size:24px;line-height:24px;font-weight:500;font-family:Arial,Helvetica,sans-serif;text-align:center}
     .social-icon.nsosyal{font-size:24px;line-height:24px;font-weight:1000;font-family:Arial Black,Arial,Helvetica,sans-serif;text-align:center}
     .side-menu-note{margin-top:auto;padding-top:16px;font-size:11px;line-height:1.45;color:#64748b;border-top:1px solid #e5e7eb}
@@ -94,20 +98,22 @@
   actions.appendChild(announcementsLink);
 
   const socialTitle = document.createElement('div');
+  socialTitle.id = 'socialMediaTitle';
   socialTitle.className = 'side-menu-section-title';
   socialTitle.textContent = 'Sosyal Medya';
   actions.appendChild(socialTitle);
 
   const socialLinks = document.createElement('div');
+  socialLinks.id = 'socialMediaLinks';
   socialLinks.className = 'social-links';
   socialLinks.innerHTML = `
     <a class="social-link" href="https://x.com/intent/post?text=Haberler-https://yalovaodm.meb.gov.tr/www/haberler/kategori/1" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
       <span class="social-icon xmark" aria-hidden="true">𝕏</span>
     </a>
-    <a class="social-link" href="https://wa.me/?text=https://yalovaodm.meb.gov.tr/www/haberler/kategori/1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
-      <svg class="social-icon" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 4.2a11.1 11.1 0 0 0-9.6 16.7L5 27l6.2-1.3A11.1 11.1 0 1 0 16 4.2Z"/>
-        <path d="M12.2 10.7c.3-.6.6-.6 1-.6h.8c.3 0 .6.1.8.6l1.1 2.5c.1.3.1.6-.1.9l-1 1.2c-.2.2-.2.5-.1.7 1.1 2.1 2.8 3.7 4.9 4.7.3.1.6.1.8-.1l1.3-1.5c.2-.3.6-.3.9-.2l2.4 1.1c.4.2.6.4.6.7 0 .6-.3 1.9-1.4 2.6-1 .7-2.3 1-3.8.6-2.4-.6-5.4-2.3-7.7-4.7-2.5-2.5-4-5.5-4.3-7.3-.2-1.2.2-2.2.8-2.8.5-.5 1.1-.8 1.5-.8Z"/>
+    <a class="social-link whatsapp" href="https://wa.me/?text=https://yalovaodm.meb.gov.tr/www/haberler/kategori/1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+      <svg class="social-icon whatsapp-icon" viewBox="0 0 32 32" aria-hidden="true">
+        <path fill="currentColor" d="M16.04 3.2A12.73 12.73 0 0 0 5.1 22.4L3.4 28.8l6.55-1.72A12.75 12.75 0 1 0 16.04 3.2Zm0 23.18c-2.02 0-4-.55-5.73-1.6l-.41-.24-3.89 1.02 1.04-3.79-.27-.42A10.39 10.39 0 1 1 16.04 26.38Z"/>
+        <path fill="currentColor" d="M21.76 18.18c-.31-.16-1.84-.91-2.13-1.01-.28-.1-.49-.16-.7.16-.2.31-.8 1.01-.98 1.22-.18.2-.36.23-.67.08-1.82-.91-3.01-1.63-4.22-3.7-.32-.55.32-.51.91-1.7.1-.2.05-.39-.03-.55-.08-.16-.7-1.68-.96-2.3-.25-.61-.51-.53-.7-.54h-.6c-.2 0-.54.08-.83.39-.28.31-1.08 1.06-1.08 2.58s1.11 2.99 1.26 3.2c.16.2 2.18 3.33 5.28 4.67.74.32 1.31.51 1.76.65.74.24 1.41.2 1.94.12.59-.09 1.84-.75 2.1-1.48.26-.73.26-1.36.18-1.49-.08-.13-.28-.21-.59-.36Z"/>
       </svg>
     </a>
     <a class="social-link" href="https://sosyal.teknofest.app/@yalovaodm" target="_blank" rel="noopener noreferrer" aria-label="N Sosyal" title="N Sosyal">
