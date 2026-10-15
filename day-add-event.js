@@ -67,6 +67,8 @@
     }, 80);
   }
 
+  window.openAdminForDate = openForDate;
+
   const cal = document.getElementById('calendar');
   if (!cal) return;
 
