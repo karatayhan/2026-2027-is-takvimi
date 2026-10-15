@@ -1,4 +1,4 @@
-const CACHE='is-takvimi-v25';
+const CACHE='is-takvimi-v26';
 const ASSETS=[
   './','./index.html','./manifest.json','./icon-192.png','./icon-512.png',
   './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js','./month-year-picker.js','./pull-to-refresh.js','./ksdt-menu.js',
