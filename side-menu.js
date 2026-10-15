@@ -83,7 +83,7 @@
 
   const newsLink = document.createElement('a');
   newsLink.className = 'side-menu-link news';
-  newsLink.href = 'https://yalovaodm.meb.gov.tr/www/duyurular/kategori/1';
+  newsLink.href = 'https://yalovaodm.meb.gov.tr/www/haberler/kategori/1';
   newsLink.target = '_blank';
   newsLink.rel = 'noopener noreferrer';
   newsLink.innerHTML = '<span>Haberler</span><span class="ext" aria-hidden="true">↗</span>';
@@ -121,7 +121,6 @@
     </a>`;
   actions.appendChild(socialLinks);
 
-  // Google Calendar ve .ics işlemleri yönetici panelinde bulunduğu için yan menüde gösterilmez.
   document.getElementById('syncCalendarBtn')?.remove();
   document.getElementById('icsDownloadBtn')?.remove();
   toolsBar.remove();
