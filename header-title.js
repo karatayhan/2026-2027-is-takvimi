@@ -28,9 +28,13 @@
       .head-brand-title h1{font-size:18px!important}
       .head-brand-title .sub{font-size:12px}
     }
+    @media(max-width:759px){
+      .head-brand-title h1{font-size:12px!important}
+      .head-brand-title .sub{font-size:8.8px}
+    }
     @media(max-width:430px){
-      .head-brand-title h1{font-size:13px!important}
-      .head-brand-title .sub{font-size:10px}
+      .head-brand-title h1{font-size:10.4px!important}
+      .head-brand-title .sub{font-size:8px}
     }
   `;
   document.head.appendChild(style);
