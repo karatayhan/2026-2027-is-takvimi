@@ -27,6 +27,12 @@
     .side-menu-link.announcements{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
     .side-menu-link .ext{font-size:15px;opacity:.75}
     .side-menu-section-title{margin-top:4px;font-size:11px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:.04em}
+    .social-links{display:flex;align-items:center;gap:10px;padding:2px 0 4px}
+    .social-link{width:44px;height:44px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#020617;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 8px rgba(15,23,42,.05);-webkit-tap-highlight-color:transparent;transition:transform .12s ease,background .12s ease}
+    .social-link:active{transform:scale(.94);background:#f8fafc}
+    .social-icon{width:24px;height:24px;display:block}
+    .social-icon.xmark{font-size:24px;line-height:24px;font-weight:500;font-family:Arial,Helvetica,sans-serif;text-align:center}
+    .social-icon.nsosyal{font-size:24px;line-height:24px;font-weight:1000;font-family:Arial Black,Arial,Helvetica,sans-serif;text-align:center}
     .side-menu-note{margin-top:auto;padding-top:16px;font-size:11px;line-height:1.45;color:#64748b;border-top:1px solid #e5e7eb}
     body.side-menu-open{overflow:hidden!important}
     @media (prefers-reduced-motion:reduce){#sideMenu,#sideMenuBackdrop{transition:none}}
@@ -86,6 +92,28 @@
   announcementsLink.rel = 'noopener noreferrer';
   announcementsLink.innerHTML = '<span>Duyurular</span><span class="ext" aria-hidden="true">↗</span>';
   actions.appendChild(announcementsLink);
+
+  const socialTitle = document.createElement('div');
+  socialTitle.className = 'side-menu-section-title';
+  socialTitle.textContent = 'Sosyal Medya';
+  actions.appendChild(socialTitle);
+
+  const socialLinks = document.createElement('div');
+  socialLinks.className = 'social-links';
+  socialLinks.innerHTML = `
+    <a class="social-link" href="https://x.com/intent/post?text=Haberler-https://yalovaodm.meb.gov.tr/www/haberler/kategori/1" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+      <span class="social-icon xmark" aria-hidden="true">𝕏</span>
+    </a>
+    <a class="social-link" href="https://wa.me/?text=https://yalovaodm.meb.gov.tr/www/haberler/kategori/1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+      <svg class="social-icon" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4.2a11.1 11.1 0 0 0-9.6 16.7L5 27l6.2-1.3A11.1 11.1 0 1 0 16 4.2Z"/>
+        <path d="M12.2 10.7c.3-.6.6-.6 1-.6h.8c.3 0 .6.1.8.6l1.1 2.5c.1.3.1.6-.1.9l-1 1.2c-.2.2-.2.5-.1.7 1.1 2.1 2.8 3.7 4.9 4.7.3.1.6.1.8-.1l1.3-1.5c.2-.3.6-.3.9-.2l2.4 1.1c.4.2.6.4.6.7 0 .6-.3 1.9-1.4 2.6-1 .7-2.3 1-3.8.6-2.4-.6-5.4-2.3-7.7-4.7-2.5-2.5-4-5.5-4.3-7.3-.2-1.2.2-2.2.8-2.8.5-.5 1.1-.8 1.5-.8Z"/>
+      </svg>
+    </a>
+    <a class="social-link" href="https://sosyal.teknofest.app/@yalovaodm" target="_blank" rel="noopener noreferrer" aria-label="N Sosyal" title="N Sosyal">
+      <span class="social-icon nsosyal" aria-hidden="true">N</span>
+    </a>`;
+  actions.appendChild(socialLinks);
 
   // Google Calendar ve .ics işlemleri yönetici panelinde bulunduğu için yan menüde gösterilmez.
   document.getElementById('syncCalendarBtn')?.remove();
