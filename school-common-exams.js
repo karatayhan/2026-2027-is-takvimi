@@ -56,7 +56,10 @@
         if (typeof render === 'function') render();
       } catch (_) {}
     });
-    filters.appendChild(label);
+
+    const ministryExamChip = filters.querySelector('input[data-c="MEB Ortak Sınavı"]')?.closest('.chip');
+    if (ministryExamChip) ministryExamChip.insertAdjacentElement('afterend', label);
+    else filters.appendChild(label);
   }
 
   addFilterChip();
