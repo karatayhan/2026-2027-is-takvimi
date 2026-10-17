@@ -1,4 +1,4 @@
-const CACHE='is-takvimi-v46';
+const CACHE='is-takvimi-v47';
 const ASSETS=[
   './','./index.html','./manifest.json','./app-icon.svg','./icon-192.png','./icon-512.png',
   './swipe.js','./intro.js','./app-pages.js','./calendar-tools.js','./admin-categories.js','./side-menu.js','./admin-fix.js','./day-selection.js','./compact-days.js','./day-add-event.js','./local-event-management.js','./school-common-exams.js','./month-year-picker.js','./pull-to-refresh.js','./ksdt-menu.js','./header-brand.js','./header-title.js','./ksdt-terms.js','./ksdt-period1-v4.js','./calendar-views.js','./week-compact.js','./news-panel.js','./news-filter-fix.js','./news-image-match-fix.js','./announcements-panel.js','./event-time-agenda.js',
