@@ -10,7 +10,6 @@
     {title:'Ortaokul – Matematik (5 ve 7. sınıflar)', start:'2026-11-05', detail:'1. dönem 1. okul geneli ortak yazılı sınavı. 6. sınıf Matematik sınavı ülke geneli ortak yazılı kapsamında 11 Kasım 2026 tarihinde yapılacaktır.'},
     {title:'Ortaokul – Sosyal Bilgiler (5, 6 ve 7. sınıflar)', start:'2026-11-06', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
     {title:'Ortaokul – Türkçe (5, 6 ve 7. sınıflar)', start:'2026-11-10', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
-    {title:'6. Sınıf Matematik', start:'2026-11-11', detail:'1. dönem 1. sınavı, ülke geneli ortak yazılı sınav kapsamında yapılacaktır.'},
     {title:'Ortaokul – İngilizce (5, 6 ve 7. sınıflar)', start:'2026-11-12', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
     {title:'Ortaokul – Din Kültürü ve Ahlak Bilgisi (5, 6 ve 7. sınıflar)', start:'2026-11-13', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
 
@@ -23,7 +22,6 @@
     {title:'Ortaöğretim – Coğrafya (9, 10 ve 11. sınıflar)', start:'2026-11-10', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
     {title:'Ortaöğretim – Türk Dili ve Edebiyatı (9 ve 11. sınıflar)', start:'2026-11-11', detail:'1. dönem 1. okul geneli ortak yazılı sınavı. 10. sınıf Türk Dili ve Edebiyatı sınavı ülke geneli ortak yazılı kapsamında 12 Kasım 2026 tarihinde yapılacaktır.'},
     {title:'Ortaöğretim – Din Kültürü ve Ahlak Bilgisi (9, 10 ve 11. sınıflar)', start:'2026-11-11', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'},
-    {title:'10. Sınıf Türk Dili ve Edebiyatı', start:'2026-11-12', detail:'1. dönem 1. sınavı, ülke geneli ortak yazılı sınav kapsamında yapılacaktır.'},
     {title:'Ortaöğretim – İngilizce (9, 10 ve 11. sınıflar)', start:'2026-11-13', detail:'1. dönem 1. okul geneli ortak yazılı sınavı.'}
   ];
 
@@ -33,6 +31,10 @@
     if (typeof selected !== 'undefined' && selected?.add) selected.add(CATEGORY);
 
     if (typeof EVENTS !== 'undefined' && Array.isArray(EVENTS)) {
+      const removedTitles = new Set(['6. Sınıf Matematik', '10. Sınıf Türk Dili ve Edebiyatı']);
+      for (let i = EVENTS.length - 1; i >= 0; i--) {
+        if (EVENTS[i].category === CATEGORY && removedTitles.has(EVENTS[i].title)) EVENTS.splice(i, 1);
+      }
       EXAMS.forEach(item => {
         const ev = { ...item, end:item.start, category:CATEGORY };
         const exists = EVENTS.some(x => x.category === CATEGORY && x.title === ev.title && x.start === ev.start);
