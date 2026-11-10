@@ -344,4 +344,7 @@
     goToday,
     getAnchor: () => cloneDate(anchor)
   };
+
+  // Uygulama her açıldığında sabit Ekim 2026 yerine cihazın bugünkü tarihini göster.
+  goToday();
 })();
